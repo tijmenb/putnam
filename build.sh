@@ -2,5 +2,5 @@ set -e
 
 cd lambdas
 find . -name "*.pyc" -exec rm -rf {} \;
-zip -r ../build/echo.zip ./echo.py ./requests
-zip -r ../build/screenshot.zip ./screenshot.py
+zip -r ../build/kickoff_trigger.zip ./kickoff_trigger.py ./requests
+zip -r ../build/take_screenshot.zip ./take_screenshot.py

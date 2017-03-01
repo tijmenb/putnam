@@ -1,6 +1,8 @@
+# Kickoff trigger
+
 # API Gateway
 resource "aws_api_gateway_rest_api" "api" {
-  name = "myapi"
+  name = "Kickoff Trigger"
 }
 
 # Create the gateway method. This will respond to GET requests.
@@ -28,7 +30,7 @@ resource "aws_api_gateway_method_response" "200" {
   status_code = "200"
 }
 
-resource "aws_api_gateway_integration_response" "MyDemoIntegrationResponse" {
+resource "aws_api_gateway_integration_response" "kickoff_integration_response" {
   depends_on  = ["aws_api_gateway_integration.integration"]
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
@@ -36,7 +38,7 @@ resource "aws_api_gateway_integration_response" "MyDemoIntegrationResponse" {
   status_code = "${aws_api_gateway_method_response.200.status_code}"
 }
 
-resource "aws_api_gateway_deployment" "MyDemoDeployment" {
+resource "aws_api_gateway_deployment" "kickoff_deployment" {
   depends_on  = ["aws_api_gateway_integration.integration"]
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
   stage_name  = "prod"
@@ -46,15 +48,13 @@ resource "aws_api_gateway_deployment" "MyDemoDeployment" {
 
 # Create the lambda function
 resource "aws_lambda_function" "lambda" {
-  filename         = "build/echo.zip"
-  function_name    = "echo"
+  filename         = "build/kickoff_trigger.zip"
+  function_name    = "kickoff-trigger-lambda"
   role             = "${aws_iam_role.role.arn}"
-  handler          = "echo.lambda_handler"
+  handler          = "kickoff_trigger.lambda_handler"
   runtime          = "python2.7"
-  source_code_hash = "${base64sha256(file("build/echo.zip"))}"
-
-  # It takes a while to fetch search & queue
-  timeout          = 60
+  source_code_hash = "${base64sha256(file("build/kickoff_trigger.zip"))}"
+  timeout          = 60                                                   # It takes a while to fetch search & queue
 }
 
 # Set up permission that the lambda can be executed by the gateway.
