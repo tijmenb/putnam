@@ -18,7 +18,7 @@ resource "aws_sqs_queue_policy" "test" {
       "Sid": "First",
       "Effect": "Allow",
       "Principal" : "*",
-      "Action":["sqs:SendMessage", "sqs:ReceiveMessage"],
+      "Action":["sqs:SendMessage", "sqs:ReceiveMessage", "sqs:GetQueueUrl"],
       "Resource": "${aws_sqs_queue.screenshot_queue.arn}"
     }
   ]

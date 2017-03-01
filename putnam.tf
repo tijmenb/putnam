@@ -52,6 +52,9 @@ resource "aws_lambda_function" "lambda" {
   handler          = "echo.lambda_handler"
   runtime          = "python2.7"
   source_code_hash = "${base64sha256(file("build/echo.zip"))}"
+
+  # It takes a while to fetch search & queue
+  timeout          = 60
 }
 
 # Set up permission that the lambda can be executed by the gateway.
