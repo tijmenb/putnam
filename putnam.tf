@@ -1,8 +1,3 @@
-# Variables
-variable "myregion" {
-  default = "eu-west-1"
-}
-
 # API Gateway
 resource "aws_api_gateway_rest_api" "api" {
   name = "myapi"
@@ -26,10 +21,33 @@ resource "aws_api_gateway_integration" "integration" {
   uri                     = "arn:aws:apigateway:${var.myregion}:lambda:path/2015-03-31/functions/${aws_lambda_function.lambda.arn}/invocations"
 }
 
+resource "aws_api_gateway_method_response" "200" {
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  http_method = "${aws_api_gateway_method.method.http_method}"
+  status_code = "200"
+}
+
+resource "aws_api_gateway_integration_response" "MyDemoIntegrationResponse" {
+  depends_on  = ["aws_api_gateway_integration.integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  http_method = "${aws_api_gateway_method.method.http_method}"
+  status_code = "${aws_api_gateway_method_response.200.status_code}"
+}
+
+resource "aws_api_gateway_deployment" "MyDemoDeployment" {
+  depends_on  = ["aws_api_gateway_integration.integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  stage_name  = "prod"
+}
+
+/* LAMBDA */
+
 # Create the lambda function
 resource "aws_lambda_function" "lambda" {
   filename         = "build/echo.zip"
-  function_name    = "mylambda"
+  function_name    = "echo"
   role             = "${aws_iam_role.role.arn}"
   handler          = "echo.lambda_handler"
   runtime          = "python2.7"
@@ -44,12 +62,13 @@ resource "aws_lambda_permission" "apigw_lambda" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn    = "arn:aws:execute-api:${var.myregion}:${var.accountId}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}/"
+  source_arn = "arn:aws:execute-api:${var.myregion}:${var.accountId}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}/"
 }
 
 # ????
 resource "aws_iam_role" "role" {
-  name               = "myrole"
+  name = "myrole"
+
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",

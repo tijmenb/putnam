@@ -1,2 +1,5 @@
 creds.tf
 terraform.tfstate.backup
+build/*
+
+*.pyc

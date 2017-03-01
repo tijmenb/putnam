@@ -1,0 +1,13 @@
+variable "myregion" {
+  default = "eu-west-1"
+}
+
+provider "aws" {
+  access_key = "XXXXX"
+  secret_key = "XXXXX"
+  region     = "${var.myregion}"
+}
+
+variable "accountId" {
+  default = "XXXXX"
+}
