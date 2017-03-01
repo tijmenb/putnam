@@ -17,10 +17,8 @@ resource "aws_sqs_queue_policy" "test" {
     {
       "Sid": "First",
       "Effect": "Allow",
-      "Principal" : {
-         "AWS": "${var.accountId}"
-      },
-      "Action":["sqs:SendMessage","sqs:ReceiveMessage"],
+      "Principal" : "*",
+      "Action":["sqs:SendMessage", "sqs:ReceiveMessage"],
       "Resource": "${aws_sqs_queue.screenshot_queue.arn}"
     }
   ]
