@@ -1,6 +1,10 @@
 import boto3
 import requests
 import json
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Kickoff Trigger
 #
@@ -14,12 +18,14 @@ def lambda_handler(event, context):
     for ex in response['facets']['content_store_document_type']['options']:
         paths.append(ex['value']['example_info']['examples'][0]['link'])
 
-    sqs = boto3.resource('sqs')
-    queue = sqs.get_queue_by_name(QueueName='screenshots-queue')
+    client = boto3.client('sns')
 
-    for link in paths:
-        queue.send_message(
-            MessageBody=json.dumps({ 'link': link })
+    for path in paths:
+        response = client.publish(
+            TargetArn='arn:aws:sns:eu-west-1:886111561883:invoke-screenshot-topic',
+            Message=json.dumps({'default': json.dumps({ 'path': path })}),
+            MessageStructure='json'
         )
+        logger.info('response ' + path + ': {}'.format(response))
 
     return { 'message': 'Queued messages', 'paths': paths }

@@ -1,5 +1,5 @@
 creds.tf
 terraform.tfstate.backup
-build/*
+lambdas_to_upload/*
 
 *.pyc
