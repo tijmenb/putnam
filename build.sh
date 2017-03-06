@@ -1,6 +1,12 @@
+# Builds the lambdas into /dist
 set -e
 
-cd lambdas
 find . -name "*.pyc" -exec rm -rf {} \;
-zip -r ../lambdas_to_upload/kickoff_trigger.zip ./kickoff_trigger.py ./requests
-zip -r ../lambdas_to_upload/take_screenshot.zip ./take_screenshot.py
+
+cd kickoff_trigger
+zip -r ../dist/kickoff_trigger.zip .
+
+cd -
+
+cd take_screenshot
+zip -r ../dist/take_screenshot.zip .

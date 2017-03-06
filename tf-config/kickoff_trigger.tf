@@ -40,12 +40,12 @@ resource "aws_api_gateway_deployment" "kickoff_deployment" {
 
 # Create the lambda function
 resource "aws_lambda_function" "kickoff_trigger" {
-  filename         = "lambdas_to_upload/kickoff_trigger.zip"
+  filename         = "dist/kickoff_trigger.zip"
   function_name    = "kickoff-trigger-lambda"
   role             = "${aws_iam_role.role.arn}"
   handler          = "kickoff_trigger.lambda_handler"
   runtime          = "python2.7"
-  source_code_hash = "${base64sha256(file("lambdas_to_upload/kickoff_trigger.zip"))}"
+  source_code_hash = "${base64sha256(file("dist/kickoff_trigger.zip"))}"
   timeout          = 60                                                               # It takes a while to fetch search & queue
 }
 
